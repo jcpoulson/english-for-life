@@ -1,8 +1,16 @@
 import datetime
 from flask_login import UserMixin
 from peewee import *
+from psycopg2 import *
 
-DATABASE = SqliteDatabase('lms.db')
+import os 
+
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+DATABASE = PostgresqlDatabase(SQLALCHEMY_DATABASE_URI)
 
 class User(UserMixin, Model):
     id = AutoField()
