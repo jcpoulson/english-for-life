@@ -1,11 +1,20 @@
-import datetime, os
+import datetime, os, urlparse
 from flask_login import UserMixin
 from peewee import *
 from psycopg2 import *
 
+urlparse.uses_netloc.append('postgres')
+url = urlparse.urlparse(os.environ['DATABASE_URL'])
 
+# for your config
+DATABASE = {
+    'engine': 'peewee.PostgresqlDatabase',
+    'name': url.path[1:],
+    'password': url.password,
+    'host': url.hostname,
+    'port': url.port,
+}
 
-DATABASE = PostgresqlDatabase('my_database', host=os.environ.get('DATABASE_URL'))
 
 class User(UserMixin, Model):
     id = AutoField()
