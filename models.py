@@ -3,14 +3,9 @@ from flask_login import UserMixin
 from peewee import *
 from psycopg2 import *
 
-import os 
-
-SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-SECRET_KEY = os.environ.get('SECRET_KEY')
-SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-DATABASE = PostgresqlDatabase(SQLALCHEMY_DATABASE_URI)
+DATABASE = PostgresqlDatabase('postgres://igotdvwfrjomru:6b9944648415a332b9e5cdf2442386bc9c18139103ebdc6557bac0886a570f2a@ec2-52-203-165-126.compute-1.amazonaws.com:5432/dcq2cjnuaud3h8')
 
 class User(UserMixin, Model):
     id = AutoField()
