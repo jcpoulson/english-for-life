@@ -1,94 +1,79 @@
-from flask import Flask, render_template, url_for, redirect, flash, g
-from flask_login import LoginManager, login_user, logout_user, login_required
-from flask_bcrypt import check_password_hash
-
-import forms
-import models
-import datetime
+import forms, datetime
+from flask import Flask, render_template, url_for
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.secret_key = 'sknvns-vo w-nvpoenovwenovwpovn s'
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
+ENV = 'prod'
 
+if ENV == 'dev':
+    app.debug = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Stinger14@localhost/e4l_test'
+else:
+    app.debug = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://igotdvwfrjomru:6b9944648415a332b9e5cdf2442386bc9c18139103ebdc6557bac0886a570f2a@ec2-52-203-165-126.compute-1.amazonaws.com:5432/dcq2cjnuaud3h8'
 
-@login_manager.user_loader
-def load_user(userid):
-    try:
-        return models.User.get(models.User.id == userid)
-    except models.DoesNotExist:
-        return None
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-@app.before_request
-def before_request():
-    """connnect to the database"""
-    g.db = models.DATABASE
-    g.db.connect()
+db = SQLAlchemy(app)
 
+class User(db.Model):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(200), unique=True)
+    password = db.Column(db.String(200))
+    first_name = db.Column(db.String(200))
+    last_name = db.Column(db.String(200))
+    country = db.Column(db.String(200))
+    language = db.Column(db.String(200))
+    interests = db.Column(db.String(200))
+    date_created = db.Column(db.DateTime, default=datetime.datetime.now)
 
-@app.after_request
-def after_request(response):
-    """close the connection to the database"""
-    g.db.close()
-    return response
-
-
-@app.route('/<username>')
-def index(username):
-    user = models.User.select().where(models.User.username == username).get()
-    friends = models.User.select().order_by(models.User.id.desc())
-    return render_template('index.html', user=user, friends=friends)
-
-@app.route('/<username>/about')
-def about(username):
-    user = models.User.select().where(models.User.username == username).get()
-    friends = models.User.select().order_by(models.User.id.desc())
-    return render_template('about.html', user=user, friends=friends)
+    def __init__(self, username, password, first_name, last_name, country, language, interests):
+        self.username = username
+        self.password = password
+        self.first_name = first_name
+        self.last_name = last_name
+        self.country = country
+        self.language = language
+        self.interests = interests
 
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
     form = forms.RegisterForm()
     if form.validate_on_submit():
-        models.User.create_user(
-            username=form.username.data,
-            password=form.password.data,
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            date_created=datetime.datetime.now(),
-            country=form.country.data,
-            language=form.language.data,
-            interests=form.interests.data
-        )
-        user = models.User.select().where(models.User.username == form.username.data).get()
-        friends = models.User.select().order_by(models.User.id.desc())
-        return render_template('index.html', user=user, friends=friends)
+        data = User(
+            form.username.data, form.password.data, form.first_name.data, 
+            form.last_name.data, form.country.data, form.language.data,
+            form.interests.data
+            )
+        db.session.add(data)
+        db.session.commit()
+        return render_template('index.html', user=User.query.filter_by(username=form.username.data).first())
     return render_template('register.html', form=form)
+
 
 @app.route('/', methods=["GET", "POST"])
 @app.route('/login', methods=["GET", "POST"])
-def login():
+def index():
     form = forms.LoginForm()
     if form.validate_on_submit():
-        try:
-            user = models.User.get(models.User.username == form.username.data)
-        except models.DoesNotExist:
-            flash("Your Username or Password doesn't match", "error")
-        else:
-            if (user.password == form.password.data):
-                login_user(user)
-                flash("you've been logged in", "success")
-                friends = models.User.select().order_by(models.User.id.desc())
-                return render_template('index.html', user=user, friends=friends)
-            else:
-                return render_template('login.html', form=form)
-                flash("Wrong username or password", "error")
+        user = User.query.filter_by(username=form.username.data).first()
+        if form.password.data == user.password:
+            return render_template('index.html', user=user, friends=User.query.all())
     return render_template('login.html', form=form)
 
 
-if __name__ == "__main__":
-    models.initialize()
-    app.run()
+@app.route('/<friend>', methods=["GET", "POST"])
+def friend(friend):
+    user = User.query.filter_by(username=friend).first()
+    return render_template('index.html', user=user, friends=User.query.all())
 
+if __name__ == '__main__':
+    app.run(debug=True)
+    user = User.query.filter_by(username='tanjiro').first()
+    friends = User.query.all()
+    for friend in friends:
+        print(friend.first_name)
