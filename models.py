@@ -4,8 +4,7 @@ from peewee import *
 from psycopg2 import *
 
 
-DATABASE = PostgresqlDatabase('dcq2cjnuaud3h8', user='igotdvwfrjomru', password='6b9944648415a332b9e5cdf2442386bc9c18139103ebdc6557bac0886a570f2a',
-                           host='ec2-52-203-165-126.compute-1.amazonaws.com', port=5432)
+DATABASE = Sqlitedatabase('lms.db')
 
 class User(UserMixin, Model):
     id = AutoField()
