@@ -72,7 +72,7 @@ def friend(friend):
     return render_template('index.html', user=user, friends=User.query.all())
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
     user = User.query.filter_by(username='tanjiro').first()
     friends = User.query.all()
     for friend in friends:
