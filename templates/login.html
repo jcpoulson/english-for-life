@@ -9,6 +9,6 @@
         {{ render_field(field) }}
     {%endfor%}
     <input type="submit" value="Login" class="button">
-    <a href="" class="button button-secondary">Register</a>    
+    <a href="{{url_for('login')}}" class="button button-secondary">Register</a>    
 </form>
 {%endblock%} 
