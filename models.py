@@ -4,7 +4,7 @@ from peewee import *
 from psycopg2 import *
 
 
-DATABASE = Sqlitedatabase('lms.db')
+DATABASE = SqliteDatabase('lms.db')
 
 class User(UserMixin, Model):
     id = AutoField()
