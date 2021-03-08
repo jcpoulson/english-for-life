@@ -58,7 +58,7 @@
                             <a href="#">Messages</a>
                         </li>
                         <li>
-                            <a href="/">Logout</a>
+                            <a href="">Logout</a>
                         </li>
                     </ul>
                 </nav>
@@ -91,7 +91,7 @@
                         
                                 <ul class="list-unstyled components py-0">
                                     <li>
-                                        <a href="#">Dashboard</a>
+                                        <a href="/">Dashboard</a>
                                     </li>
                                     <li>
                                         <a href="/about">About</a>
@@ -162,16 +162,52 @@
                                         <img src="static/icons/pie-chart.svg">
                                     </div>
                                     <div class="col">
-                                        <h1 class="mt-3">Course Announcements</h1>
+                                        <h1 class="mt-3">Learning Progess</h1>
                                     </div>
                                 </div>
                                 <div class="row mt-5">
                                     <div class="col">
-                                        <h3><strong>></strong> Hello There</h3>
-                                        <h3 class="mt-4"><strong>></strong> Here is the base layout for a dashboard for the English For Life project sponsored by Lynchburg Baptist Association</h3>
-                                        <h3 class="mt-4"><strong>></strong> This Prototype Was Built Using Flask Not Django, Still Python though</h3>
-                                        <h3 class="mt-4"><strong>></strong> A Discussion Board/Forum feature Will Be Coming Shortly</h3>
-                                        <h3 class="mt-4"><strong>></strong> Also This Prototype Website is not very secure at all, just keep that in mind</h3>
+                                        <canvas id="myChart" width="400" height="200"></canvas>
+                                        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        datasets: [{
+            label: '# of Assignments completed',
+            data: [12, 19, 3, 5, 2, 3, 2],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+</script>
                                     </div>
                                 </div>
                             </div> <!--End Middle Row Container-->

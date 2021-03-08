@@ -71,9 +71,18 @@ def friend(friend):
     user = User.query.filter_by(username=friend).first()
     return render_template('index.html', user=user, friends=User.query.all())
 
+@app.route('/data', methods=["GET"])
+def user_data():
+    user = User.query.filter_by(username="Jonah_Poulson").first()
+    return render_template('data.html', user=user)
+
+@app.route('/about', methods=["GET"])
+def about():
+    user = User.query.filter_by(username="Jonah_Poulson").first()
+    return render_template('about.html', user=user)
+
 if __name__ == '__main__':
-    app.run()
-    user = User.query.filter_by(username='tanjiro').first()
+    app.run(debug=True)
     friends = User.query.all()
     for friend in friends:
         print(friend.first_name)
